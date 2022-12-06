@@ -6,6 +6,9 @@ namespace TO_BDD.Services
     {
         void CreateOrder(Cart cart);
         List<Order> GetAllOrders();
+
+        //do testow
+        void ReomoveAllOrders();
     }
 
     public class OrderService

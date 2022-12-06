@@ -8,6 +8,10 @@ namespace TO_BDD.Services
         List<Book> GetAllBooks();
         List<Book> GetAllBookByType(BookType bookType);
         List<Book> GetAllProposedBooks();
+
+        //do testów
+        bool RemoveAllBooks();
+        bool AddBook(Book book);
     }
 
     public class BookService
