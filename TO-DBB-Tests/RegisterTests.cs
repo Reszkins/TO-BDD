@@ -10,10 +10,7 @@ namespace TO_DBB_Tests
         public void Valid_Register_Data()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((bool u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "user";
             string password = "password";
 
@@ -28,10 +25,7 @@ namespace TO_DBB_Tests
         public void Invalid_Register_Data_Blank_Username()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((bool u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "";
             string password = "password";
 
@@ -46,10 +40,7 @@ namespace TO_DBB_Tests
         public void Invalid_Register_Data_Blank_Password()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((bool u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "user";
             string password = "";
 
@@ -64,10 +55,7 @@ namespace TO_DBB_Tests
         public void Invalid_Register_Data_User_Exists()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((bool u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username1 = "user";
             string password1 = "password";
             string username2 = "user";
@@ -85,10 +73,7 @@ namespace TO_DBB_Tests
         public void Invalid_Register_Data_Username_With_Special_Characters()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((bool u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "us^er,";
             string password = "password";
 
@@ -103,10 +88,7 @@ namespace TO_DBB_Tests
         public void Invalid_Register_Data_Password_With_Special_Characters()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((bool u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "user";
             string password = "passw,ord^";
 

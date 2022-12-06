@@ -10,10 +10,7 @@ namespace TO_DBB_Tests
         public void Valid_Login_Data()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((User u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "user";
             string password = "password";
             userService.Register(username, password);
@@ -29,10 +26,7 @@ namespace TO_DBB_Tests
         public void Invalid_Login_Data_Invalid_Username()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((User u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "user";
             string password = "password";
             userService.Register(username, password);
@@ -48,10 +42,7 @@ namespace TO_DBB_Tests
         public void Invalid_Login_Data_Invalid_Password()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((User u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "user";
             string password = "password";
             userService.Register(username, password);
@@ -67,10 +58,7 @@ namespace TO_DBB_Tests
         public void Invalid_Login_Data_Invalid_Blank_Username()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((User u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "user";
             string password = "password";
             userService.Register(username, password);
@@ -86,10 +74,7 @@ namespace TO_DBB_Tests
         public void Invalid_Login_Data_Invalid_Blank_Password()
         {
             //Arrange
-            var userContextMock = new Mock<UserContext>();
-            userContextMock.Setup(x => x.User.Register(It.IsAny<User>())).Returns((User u) => u);
-            var userService = new UserService(userContextMock.Object);
-
+            UserService userService = new UserService();
             string username = "user";
             string password = "password";
             userService.Register(username, password);
