@@ -1,18 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 using TO_BDD.Models;
 
 namespace TO_BDD.Repositories
 {
-    public class DbRepository : DbContext
+    public class DbRepository
     {
-        public DbRepository(DbContextOptions<DbRepository> options) : base(options)
+        public async Task<List<T>> LoadData<T>(string sql)
         {
+            string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=TO-BDD;Trusted_Connection=True;";
 
+            using(IDbConnection connection = new SqlConnection(connectionString))
+            {
+                var data = await connection.QueryAsync<T>(sql);
+                return data.ToList();
+            }
         }
-
-        public DbSet<Book> Books { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Cart> Carts { get; set; }
     }
 }

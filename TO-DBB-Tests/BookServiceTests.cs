@@ -78,7 +78,7 @@ namespace TO_DBB_Tests
             bookService.RemoveAllBooks();
 
             //Act
-            List<Book> books = bookService.GetAllBookByType(new BookType("Powieść");
+            List<Book> books = bookService.GetAllBookByType(new BookType("Powieść"));
 
             //Assert
             Assert.Empty(books);
