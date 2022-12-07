@@ -22,7 +22,7 @@ namespace TO_BDD.Services
 
         public bool Login(string username, string password)
         {
-            if(string.IsNullOrEmpty(username))
+            if(string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
                 return false;
             }
