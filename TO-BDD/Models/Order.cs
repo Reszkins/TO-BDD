@@ -3,7 +3,7 @@
     public class Order
     {
         public int Id { get; set; }
-        public Cart Cart { get; set; } = new();
+        public int CartId { get; set; } = new();
         public DateTime TimeStamp { get; set; }
     }
 }

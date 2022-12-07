@@ -1,14 +1,16 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using TO_BDD.Data;
+using Microsoft.EntityFrameworkCore;
+using TO_BDD.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
-
+builder.Services.AddDbContext<DbRepository>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("SqlConnectionString")
+    ));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
