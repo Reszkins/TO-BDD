@@ -1,7 +1,58 @@
 ﻿@page "/login"
+@using TO_BDD.Models
+@using TO_BDD.Services
+@using TO_BDD.Providers
+@inject NavigationManager _nav
+@inject LoginStateProvider _loginState
 
-<h3>LoginForm</h3>
+<MudGrid>
+    <MudItem xs="12" sm="6">
+        <h3>Login</h3>
+        <MudPaper Class="pa-4">
+            <MudForm>
+                <MudTextField T="string" @bind-Value="@Username" Label="Username" Variant="Variant.Filled" Required="true" RequiredError="User name is required!" />
+                <MudTextField T="string" @bind-Value="@Password" Label="Password" Variant="Variant.Filled"
+                              InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                <MudButton Variant="Variant.Filled" OnClick="Login">Login</MudButton>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <h3>Register</h3>
+        <MudPaper Class="pa-4">
+            <MudForm>
+                <MudTextField T="string" @bind-Value="@RegisterUsername" Label="Username" Variant="Variant.Filled" Required="true" RequiredError="User name is required!" />
+                <MudTextField T="string" @bind-Value="@RegisterPassword" Label="Password" Variant="Variant.Filled" HelperText="Choose a strong password"
+                              HelperTextOnFocus="true" InputType="InputType.Password" Required="true" RequiredError="Password is required!" />
+                <MudButton Variant="Variant.Filled" OnClick="Register">Register</MudButton>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
 
 @code {
+    private UserService _userService;
 
+    private string Username { get; set; } = string.Empty;
+    private string Password { get; set; } = string.Empty;
+    private string RegisterUsername { get; set; } = string.Empty;
+    private string RegisterPassword { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _userService = new();
+    }
+
+    private async Task Login() {
+        var result = await _userService.Login(Username, Password);
+        if(result) {
+            _loginState.LogUserIn();
+            _nav.NavigateTo("/");
+        }
+
+    }
+
+    private async Task Register() {
+        await _userService.Register(RegisterUsername, RegisterPassword);
+    }
 }

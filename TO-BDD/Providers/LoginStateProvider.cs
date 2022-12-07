@@ -2,7 +2,7 @@
 {
     public class LoginStateProvider
     {
-        private bool isUserLoggedIn = true;
+        private bool isUserLoggedIn = false;
 
         public void LogUserIn() => isUserLoggedIn = true;
 

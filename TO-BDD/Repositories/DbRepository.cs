@@ -18,5 +18,25 @@ namespace TO_BDD.Repositories
                 return data.ToList();
             }
         }
+
+        public async Task SaveData(string sql)
+        {
+            string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=TO-BDD;Trusted_Connection=True;";
+            using (IDbConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.ExecuteAsync(sql);
+            }
+        }
+
+        public async Task SaveUserData(string username, byte[] passwordHash, byte[] passwordSalt )
+        {
+
+            string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=TO-BDD;Trusted_Connection=True;";
+            using (IDbConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.ExecuteAsync("INSERT INTO dbo.Users (UserName, PasswordHash, PasswordSalt) " +
+                    "VALUES (@name, @hash, @salt)", new {name = username, hash = passwordHash, salt = passwordSalt});
+            }
+        }
     }
 }

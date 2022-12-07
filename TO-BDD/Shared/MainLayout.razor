@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
-
+@using TO_BDD.Providers
+@inject LoginStateProvider _loginState
+@inject NavigationManager _nav
 <PageTitle>TO-BDD</PageTitle>
 
 <div class="page">
@@ -9,7 +11,10 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            @*<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>*@
+            @if(_loginState.IsUserLoggedIn()) {
+                <MudButton Variant="Variant.Filled" OnClick="Logout">Logout</MudButton>
+            }
         </div>
 
         <article class="content px-4">
@@ -17,3 +22,10 @@
         </article>
     </main>
 </div>
+
+@code{
+    private void Logout() {
+        _loginState.LogUserOut();
+        _nav.NavigateTo("/login");
+    }
+}

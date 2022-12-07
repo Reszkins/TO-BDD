@@ -9,8 +9,8 @@ namespace TO_BDD.Services
 {
     public interface IUserService
     {
-        bool Login(string username, string password);
-        bool Register(string username, string password);
+        Task<bool> Login(string username, string password);
+        Task<bool> Register(string username, string password);
     }
     public class UserService : IUserService
     {
@@ -20,97 +20,92 @@ namespace TO_BDD.Services
             _db = new DbRepository();
         }
 
-        public bool Login(string username, string password)
+        public async Task<bool> Login(string username, string password)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
+
+            List<User> users = await GetUser(username);
+            if (users.Count < 1)
+            {
+                return false;
+            }
+
+            if (!VerifyPasswordHash(password, users[0].PasswordHash, users[0].PasswordSalt))
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public bool Register(string username, string password)
+        public async Task<bool> Register(string username, string password)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(username) ||
+                string.IsNullOrEmpty(password) ||
+                !ContainsOnlyAlphaNumericCharacters(username) ||
+                !ContainsOnlyAlphaNumericCharacters(password)
+                )
+            {
+                return false;
+            }
+            List<User> users = await GetUser(username);
+
+            if(users.Count > 0)
+            {
+                return false;
+            }
+
+            CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
+            User user = new()
+            {
+                UserName = username,
+                PasswordHash = passwordHash,
+                PasswordSalt = passwordSalt
+            };
+
+            await AddUser(user);
+
+            return true;
         }
 
-        //public bool Login(string username, string password)
-        //{
-        //    if(string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-        //    {
-        //        return false;
-        //    }
+        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512())
+            {
+                passwordSalt = hmac.Key;
+                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
 
-        //    User user = GetUser(u => u.UserName.Equals(username));
-        //    if(user == default)
-        //    {
-        //        return false;
-        //    }
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(passwordHash);
+            }
+        }
 
-        //    if(!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
-        //    {
-        //        return false;
-        //    }
+        private async Task<List<User>> GetUser(string username)
+        {
+            string sql = $"SELECT * FROM [dbo].[Users] WHERE [UserName] = '{username}'";
 
-        //    return true;
-        //}
+            return await _db.LoadData<User>(sql);
+        }
 
-        //public bool Register(string username, string password)
-        //{
-        //    if (string.IsNullOrEmpty(username) || 
-        //        string.IsNullOrEmpty(password) ||
-        //        !ContainsOnlyAlphaNumericCharacters(username) || 
-        //        !ContainsOnlyAlphaNumericCharacters(password)
-        //        )
-        //    {
-        //        return false;
-        //    }
+        private async Task AddUser(User user)
+        {
+            await _db.SaveUserData(user.UserName, user.PasswordHash, user.PasswordSalt);
+        }
 
-        //    if (GetUser(u => u.UserName.Equals(username))!=default)
-        //    {
-        //        return false;
-        //    }
+        private bool ContainsOnlyAlphaNumericCharacters(string inputString)
+        {
+            var regexItem = new Regex("^[a-zA-Z0-9 ]*$");
 
-        //    CreatePasswordHash(password, out byte[] passwordHash, out byte[] passwordSalt);
-        //    User user = new()
-        //    {
-        //        UserName = username,
-        //        PasswordHash = passwordHash,
-        //        PasswordSalt = passwordSalt
-        //    };
-        //    _dbRepository.Add(user);
-        //    _dbRepository.SaveChanges();
-
-        //    return true;
-        //}
-
-        //private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        //{
-        //    using (var hmac = new HMACSHA512())
-        //    {
-        //        passwordSalt = hmac.Key;
-        //        passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-        //    }
-        //}
-
-        //private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
-        //{
-        //    using (var hmac = new HMACSHA512(passwordSalt))
-        //    {
-        //        var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-        //        return computedHash.SequenceEqual(passwordHash);
-        //    }
-        //}
-
-        //private User GetUser(Expression<Func<User, bool>> filter)
-        //{
-        //    IQueryable<User> query = _dbRepository.Set<User>();
-        //    query = query.Where(filter);
-        //    User user = query.FirstOrDefault();
-        //    return user;
-        //}
-
-        //private bool ContainsOnlyAlphaNumericCharacters(string inputString)
-        //{
-        //    var regexItem = new Regex("^[a-zA-Z0-9 ]*$");
-
-        //    return regexItem.IsMatch(inputString);
-        //}
+            return regexItem.IsMatch(inputString);
+        }
     }
 }
