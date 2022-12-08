@@ -63,7 +63,8 @@
         var orderService = new OrderService();
         await orderService.CreateOrder(Books, _loginState.GetUserName());
 
-        //clear cart
+        _cartService.ClearCart();
+
         _nav.NavigateTo("/");
     }
 

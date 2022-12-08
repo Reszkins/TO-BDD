@@ -21,7 +21,7 @@ namespace TO_BDD.Services
         public async Task<List<Order>> GetAllOrders(string username)
         {
             var userService = new UserService();
-            string sql = $"SELECT * FROM [dbo].[Orders] WHERE UserId = {await userService.GetUserId(username)}";
+            string sql = $"SELECT * FROM [dbo].[Order] WHERE UserId = {await userService.GetUserId(username)}";
 
             return await _db.LoadData<Order>(sql);
         }

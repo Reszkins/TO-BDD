@@ -7,6 +7,7 @@ namespace TO_BDD.Services
         void AddToCart(Book book);
         void RemoveFromCart(Book book);
         List<Book> GetBooksFromCart();
+        void ClearCart();
     }
     public class CartService : ICartService
     {
@@ -14,6 +15,11 @@ namespace TO_BDD.Services
         public CartService()
         {
             cart = new Cart();
+        }
+
+        public void ClearCart()
+        {
+            cart.Books.Clear();
         }
         public void AddToCart(Book book)
         {
