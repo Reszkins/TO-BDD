@@ -1,4 +1,4 @@
-﻿using Moq;
+﻿using System.Collections.Generic;
 using TO_BDD.Enums;
 using TO_BDD.Models;
 using TO_BDD.Services;
@@ -13,10 +13,10 @@ namespace TO_DBB_Tests
             //Arrange
             BookService bookService = new BookService();
 
-            bookService.RemoveAllBooks();
+            await bookService.RemoveAllBooks();
 
             //Act
-            List<Book> books = await bookService.GetAllBooks();
+            var books = await bookService.GetAllBooks();
 
             //Assert
             Assert.Empty(books);
@@ -24,71 +24,87 @@ namespace TO_DBB_Tests
         }
 
         [Fact]
-        public void Get_All_Books_When_One_Book_In_List()
+        public async Task Get_All_Books_When_One_Book_In_List()
         {
             //Arrange
             BookService bookService = new BookService();
-            bookService.RemoveAllBooks();
-            Book book = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-            bookService.AddBook(book);
+            await bookService.RemoveAllBooks();
+            Book book = new()
+                    { 
+                        Id = 1,
+                        Title = "Pan Tadeusz",
+                        Description = "Opis Pana Tadeusza",
+                        Author = "Adam Mickiewicz",
+                        Type = "poetry"
+            };
+            await bookService.AddBook(book);
 
             //Act
-            List<Book> books = bookService.GetAllBooks();
+            var books = await bookService.GetAllBooks();
 
             //Assert
-            List<Book> booksExpected = new List<Book>();
-            booksExpected.Add(book);
+            List<Book> booksExpected = new List<Book> { book };
 
             Assert.Equal(booksExpected, books);
 
         }
 
         [Fact]
-        public void Get_All_Books_When_Multiple_Books_In_List()
+        public async Task Get_All_Books_When_Multiple_Books_In_List()
         {
             //Arrange
             BookService bookService = new BookService();
-            bookService.RemoveAllBooks();
+            await bookService.RemoveAllBooks();
             Book book1 = new()
             {
                 Id = 1,
                 Title = "Pan Tadeusz",
                 Description = "Opis Pana Tadeusza",
                 Author = "Adam Mickiewicz",
-                Type = "historyczne"
+                Type = "poetry"
             };
-            //Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));  <- tak nie
 
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
 
-            Book book2 = new Book("Lalka", "Opis costam blabla", "Bolesław Prus", new BookType("Powieść"));
-            Book book3 = new Book("Solaris", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
-            bookService.AddBook(book3);
+            Book book3 = new()
+            {
+                Id = 3,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
+            await bookService.AddBook(book1);
+            await bookService.AddBook(book2);
+            await bookService.AddBook(book3);
+
+            List<Book> booksExpected = new List<Book> { book1, book2, book3 };
 
             //Act
-            List<Book> books = bookService.GetAllBooks();
+            var books = await bookService.GetAllBooks();
 
             //Assert
-            List<Book> booksExpected = new List<Book>();
-            booksExpected.Add(book1);
-            booksExpected.Add(book2);
-            booksExpected.Add(book3);
-
             Assert.Equal(booksExpected, books);
 
         }
 
         [Fact]
-        public void Get_All_Books_By_Type_When_List_Empty()
+        public async Task Get_All_Books_By_Type_When_List_Empty()
         {
             //Arrange
             BookService bookService = new BookService();
 
-            bookService.RemoveAllBooks();
+            await bookService.RemoveAllBooks();
 
             //Act
-            List<Book> books = bookService.GetAllBookByType(new BookType("Powieść"));
+            var books = await bookService.GetAllBooksByType("novel");
 
             //Assert
             Assert.Empty(books);
@@ -96,195 +112,399 @@ namespace TO_DBB_Tests
         }
 
         [Fact]
-        public void Get_All_Books_By_Type_When_No_Type()
+        public async Task Get_All_Books_By_Type_When_No_Type()
         {
             //Arrange
             BookService bookService = new BookService();
 
-            bookService.RemoveAllBooks();
-            Book book = new Book("Solaris", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            bookService.AddBook(book);
+            await bookService.RemoveAllBooks();
+            Book book = new()
+            {
+                Id = 1,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
+            await bookService.AddBook(book);
 
             //Act
-            List<Book> books = bookService.GetAllBookByType(new BookType("Powieść"));
+            var books = await bookService.GetAllBooksByType("novel");
 
             //Assert
             Assert.Empty(books);
         }
 
         [Fact]
-        public void Get_All_Books_By_Type_When_Only_That_Type()
+        public async Task Get_All_Books_By_Type_When_Only_That_Type()
         {
             //Arrange
             BookService bookService = new BookService();
 
-            bookService.RemoveAllBooks();
-            Book book = new Book("Lalka", "Opis costam blabla", "Bolesław Prus", new BookType("Powieść"));
-            bookService.AddBook(book);
+            await bookService.RemoveAllBooks();
+            Book book = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
+            await bookService.AddBook(book);
+
+            List<Book> booksExpected = new List<Book> { book };
 
             //Act
-            List<Book> books = bookService.GetAllBookByType(new BookType("Powieść"));
+            var books = await bookService.GetAllBooksByType("novel");
 
             //Assert
-            List<Book> booksExpected = new List<Book>();
-            booksExpected.Add(book);
-
             Assert.Equal(booksExpected, books);
         }
 
         [Fact]
-        public void Get_All_Books_By_Type_When_Multiple_Types()
+        public async Task Get_All_Books_By_Type_When_Multiple_Types()
         {
             //Arrange
             BookService bookService = new BookService();
 
-            bookService.RemoveAllBooks();
-            Book book1 = new Book("Lalka", "Opis costam blabla", "Bolesław Prus", new BookType("Powieść"));
-            Book book2 = new Book("Solaris", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
+            await bookService.RemoveAllBooks();
+            Book book1 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
 
+            Book book2 = new()
+            {
+                Id = 3,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
+            await bookService.AddBook(book1);
+            await bookService.AddBook(book2);
+
+            List<Book> booksExpected = new List<Book> { book1 };    
             //Act
-            List<Book> books = bookService.GetAllBookByType(new BookType("Powieść"));
+            var books = await bookService.GetAllBooksByType("novel");
 
             //Assert
-            List<Book> booksExpected = new List<Book>();
-            booksExpected.Add(book1);
-
             Assert.Equal(booksExpected, books);
         }
 
         [Fact]
-        public void Get_All_Proposed_Books_By_Type_When_No_Previous_Orders()
+        public async Task Get_All_Proposed_Books_By_Type_When_No_Previous_Orders()
         {
             //Arrange
+            UserService userService = new UserService();   
             BookService bookService = new BookService();
             OrderService orderService = new OrderService();
 
-            bookService.RemoveAllBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-            Book book2 = new Book("Lalka", "Opis costam blabla", "Bolesław Prus", new BookType("Powieść"));
-            Book book3 = new Book("Solaris", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
-            bookService.AddBook(book3);
+            await userService.Register("user", "password");
+
+
+            await bookService.RemoveAllBooks();
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
+
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
+
+            Book book3 = new()
+            {
+                Id = 3,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
+            await bookService.AddBook(book1);
+            await bookService.AddBook(book2);
+            await bookService.AddBook(book3);
 
             orderService.RemoveAllOrders();
 
             //Act
-            List<Book> books = bookService.GetAllProposedBooks();
+            var books = await bookService.GetAllProposedBooks("user");
 
             //Assert
             Assert.Empty(books);
         }
 
         [Fact]
-        public void Get_All_Proposed_Books_By_Type_When_Nothing_Match()
+        public async Task Get_All_Proposed_Books_By_Type_When_Nothing_Match()
         {
             //Arrange
+            UserService userService = new UserService();
             BookService bookService = new BookService();
-            CartService cartService = new CartService();
             OrderService orderService = new OrderService();
 
-            bookService.RemoveAllBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-            Book book2 = new Book("Lalka", "Opis costam blabla", "Bolesław Prus", new BookType("Powieść"));
-            Book book3 = new Book("Solaris", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
-            bookService.AddBook(book3);
+            await bookService.RemoveAllBooks();
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
 
-            cartService.RemoveAllBooks();
-            cartService.AddToCart("Pan Tadeusz"); //nwm czemu dodaje sie string a nie objekt Book ale ok
-            Cart cart = cartService.GetCart();
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
 
-            orderService.RemoveAllOrders();
-            orderService.CreateOrder(cart);
+            Book book3 = new()
+            {
+                Id = 3,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
+
+            await bookService.AddBook(book1);
+            await bookService.AddBook(book2);
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+
+            List<Book> booksOrdered = new List<Book> { book3 };
+
+            await orderService.CreateOrder(booksOrdered, "user");
 
             //Act
-            List<Book> books = bookService.GetAllProposedBooks();
+            var books = await bookService.GetAllProposedBooks("user");
 
             //Assert
-            Assert.Empty(books);  //zakladamy ze nie podpowiada ksiazki ktora juz kupil
+            Assert.Empty(books);
         }
 
         [Fact]
-        public void Get_All_Proposed_Books_By_Type_When_One_Match()
+        public async Task Get_All_Proposed_Books_By_Type_When_One_Match()
         {
             //Arrange
+            UserService userService = new UserService();
             BookService bookService = new BookService();
-            CartService cartService = new CartService();
             OrderService orderService = new OrderService();
 
-            bookService.RemoveAllBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-            Book book2 = new Book("Lalka", "Opis costam blabla", "Bolesław Prus", new BookType("Powieść"));
-            Book book3 = new Book("Solaris", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            Book book4 = new Book("Bajki Robotów", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
-            bookService.AddBook(book3);
-            bookService.AddBook(book4);
+            await bookService.RemoveAllBooks();
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
 
-            cartService.RemoveAllBooks();
-            cartService.AddToCart("Solaris");
-            Cart cart = cartService.GetCart();
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
 
-            orderService.RemoveAllOrders();
-            orderService.CreateOrder(cart);
+            Book book3 = new()
+            {
+                Id = 3,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
+
+
+            await bookService.AddBook(book1);
+            await bookService.AddBook(book2);
+            await bookService.AddBook(book3);
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+
+            List<Book> booksOrdered = new List<Book> { book3 };
+            await orderService.CreateOrder(booksOrdered, "user");
+
+            List<Book> booksExpected = new List<Book> { book3 };
 
             //Act
-            List<Book> books = bookService.GetAllProposedBooks();
+            var books = await bookService.GetAllProposedBooks("user");
 
             //Assert
-            List<Book> booksExpected = new List<Book>();
-            booksExpected.Add(book4);
-
             Assert.Equal(booksExpected, books);
         }
 
         [Fact]
-        public void Get_All_Proposed_Books_By_Type_When_Multiple_Orders()
+        public async Task Get_All_Proposed_Books_By_Type_When_Multiple_Matches()
         {
             //Arrange
+            UserService userService = new UserService();
             BookService bookService = new BookService();
-            CartService cartService = new CartService();
             OrderService orderService = new OrderService();
 
-            bookService.RemoveAllBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-            Book book2 = new Book("Lalka", "Opis costam blabla", "Bolesław Prus", new BookType("Powieść"));
-            Book book3 = new Book("Solaris", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            Book book4 = new Book("Bajki Robotów", "opis", "Stanisław Lem", new BookType("Science Fiction"));
-            Book book5 = new Book("Potop", "opis", "Henryk Sienkiewicz", new BookType("Powieść"));
-            Book book6 = new Book("Krzyżacy", "opis", "Henryk Sienkiewicz", new BookType("Powieść"));
-            bookService.AddBook(book1);
-            bookService.AddBook(book2);
-            bookService.AddBook(book3);
-            bookService.AddBook(book4);
-            bookService.AddBook(book5);
-            bookService.AddBook(book6);
+            await bookService.RemoveAllBooks();
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
 
-            cartService.RemoveAllBooks();
-            cartService.AddToCart("Solaris");
-            cartService.AddToCart("Lalka");
-            Cart cart1 = cartService.GetCart();
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
 
-            cartService.RemoveAllBooks();
-            cartService.AddToCart("Potop");
-            Cart cart2 = cartService.GetCart();
+            Book book3 = new()
+            {
+                Id = 3,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
 
-            orderService.RemoveAllOrders();
-            orderService.CreateOrder(cart1);
-            orderService.CreateOrder(cart2);
+            Book book4 = new()
+            {
+                Id = 4,
+                Title = "Bajki Robotów",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
 
+            await bookService.AddBook(book1);
+            await bookService.AddBook(book2);
+            await bookService.AddBook(book3);
+            await bookService.AddBook(book4);
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+
+            List<Book> booksOrdered = new List<Book> { book3 };
+            await orderService.CreateOrder(booksOrdered, "user");
+
+            List<Book> booksExpected = new List<Book> { book3, book4 };
             //Act
-            List<Book> books = bookService.GetAllProposedBooks();
+            var books = await bookService.GetAllProposedBooks("user");
 
             //Assert
-            List<Book> booksExpected = new List<Book>();
-            booksExpected.Add(book6);
+            Assert.Equal(booksExpected, books);
+        }
 
+        [Fact]
+        public async Task Get_All_Proposed_Books_By_Type_When_Multiple_Orders()
+        {
+            //Arrange
+            UserService userService = new UserService();
+            BookService bookService = new BookService();
+            OrderService orderService = new OrderService();
+
+            await bookService.RemoveAllBooks();
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
+
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
+
+            Book book3 = new()
+            {
+                Id = 3,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
+
+            Book book4 = new()
+            {
+                Id = 4,
+                Title = "Bajki Robotów",
+                Description = "opis",
+                Author = "Stanisław Lem",
+                Type = "scifi"
+            };
+
+            Book book5 = new()
+            {
+                Id = 5,
+                Title = "Potop",
+                Description = "opis",
+                Author = "Henryk Sienkiewicz",
+                Type = "novel"
+            };
+
+            //Book book6 = new()
+            //{
+            //    Id = 6,
+            //    Title = "Krzyżacy",
+            //    Description = "opis",
+            //    Author = "Henryk Sienkiewicz",
+            //    Type = "novel"
+            //};
+
+            await bookService.AddBook(book1);
+            await bookService.AddBook(book2);
+            await bookService.AddBook(book3);
+            await bookService.AddBook(book4);
+            await bookService.AddBook(book5);
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+
+            List<Book> booksOrdered1 = new List<Book> { book3, book2 };
+            List<Book> booksOrdered2 = new List<Book> { book5 };
+
+            await orderService.CreateOrder(booksOrdered1, "user");
+            await orderService.CreateOrder(booksOrdered2, "user");
+
+            List<Book> booksExpected = new List<Book> { book2, book5 };
+
+            //Act
+            var books = await bookService.GetAllProposedBooks("user");
+
+
+            //Assert
             Assert.Equal(booksExpected, books);
         }
 
