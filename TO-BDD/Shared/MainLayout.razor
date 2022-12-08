@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@using TO_BDD.Models
 @using TO_BDD.Providers
+@using TO_BDD.Services
 @inject LoginStateProvider _loginState
 @inject NavigationManager _nav
 <PageTitle>TO-BDD</PageTitle>
@@ -17,13 +19,17 @@
             }
         </div>
 
-        <article class="content px-4">
+        @*<article class="content px-4">
             @Body
-        </article>
+        </article>*@
+        <CascadingValue Value="@cartService">
+            @Body
+        </CascadingValue>
     </main>
 </div>
 
 @code{
+    private CartService cartService = new CartService();
     private void Logout() {
         _loginState.LogUserOut();
         _nav.NavigateTo("/login");

@@ -1,11 +1,32 @@
-﻿namespace TO_BDD.Services
+﻿using TO_BDD.Models;
+
+namespace TO_BDD.Services
 {
     public interface ICartService
     {
-        void AddToCart(string book);
-        void RemoveFromCart(string book);
+        void AddToCart(Book book);
+        void RemoveFromCart(Book book);
+        List<Book> GetBooksFromCart();
     }
-    public class CartService
+    public class CartService : ICartService
     {
+        Cart cart;
+        public CartService()
+        {
+            cart = new Cart();
+        }
+        public void AddToCart(Book book)
+        {
+            cart.Books.Add(book);
+        }
+
+        public void RemoveFromCart(Book book)
+        {
+            cart.Books.Remove(book);
+        }
+        public List<Book> GetBooksFromCart()
+        {
+            return cart.Books;
+        }
     }
 }

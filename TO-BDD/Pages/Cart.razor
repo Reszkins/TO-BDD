@@ -1,5 +1,80 @@
-﻿<h3>Cart</h3>
+﻿@page "/Cart"
+@using TO_BDD.Providers
+@using TO_BDD.Models
+@using TO_BDD.Services
+@inject NavigationManager _nav
+@inject LoginStateProvider _loginState
+
+<MudTable Items="@Books" Hover="true" Breakpoint="Breakpoint.Sm" Filter="new Func<Book,bool>(FilterFunc1)" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Books</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Outlined" OnClick="@(() => MakeOrder())">Make Order</MudButton>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Author</MudTh>
+        <MudTh>Type</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="Author">@context.Author</MudTd>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+        <MudTd>
+            @*<MudButton Variant="Variant.Outlined" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" OnClick="@(() => DeleteBookFromCart(context))">Delete From Cart</MudButton>*@
+            <MudFab @onclick="@(()=>DeleteBookFromCart(@context))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small" />
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
 
 @code {
 
+    [CascadingParameter]
+    public CartService _cartService { get; set; }
+
+    private string searchString { get; set; } = string.Empty;
+    private List<Book> Books { get; set; } = new();
+    private bool _loading = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Books = _cartService.GetBooksFromCart();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!_loginState.IsUserLoggedIn()) _nav.NavigateTo("/login");
+    }
+
+    private void DeleteBookFromCart(Book book)
+    {
+        _cartService.RemoveFromCart(book);
+        //Books = _cartService.GetBooksFromCart();
+        //StateHasChanged();
+    }
+
+    private void MakeOrder() {
+
+    }
+
+    private bool FilterFunc1(Book element) => FilterFunc(element, searchString);
+
+    private bool FilterFunc(Book element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Type.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
 }

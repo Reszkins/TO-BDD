@@ -1,5 +1,67 @@
-﻿<h3>ProposedBooks</h3>
+﻿@page "/ProposedBooks"
+@using TO_BDD.Providers
+@using TO_BDD.Models
+@using TO_BDD.Services
+@inject NavigationManager _nav
+@inject LoginStateProvider _loginState
+
+<MudTable Items="@Books" Hover="true" Breakpoint="Breakpoint.Sm" Filter="new Func<Book,bool>(FilterFunc1)" Loading="@_loading" LoadingProgressColor="Color.Info">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Books</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Author</MudTh>
+        <MudTh>Type</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Description">@context.Description</MudTd>
+        <MudTd DataLabel="Author">@context.Author</MudTd>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+        <MudTd>
+            <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => NavToBookById(context.Id))">Details</MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
 
 @code {
+    private BookService _bookService;
+    private string searchString { get; set; } = string.Empty;
+    private List<Book> Books { get; set; } = new();
+    private bool _loading = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        _bookService = new();
+        Books = await _bookService.GetAllProposedBooks();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!_loginState.IsUserLoggedIn()) _nav.NavigateTo("/login");
+    }
+
+    private bool FilterFunc1(Book element) => FilterFunc(element, searchString);
+
+    private bool FilterFunc(Book element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.Type.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    private void NavToBookById(int id)
+    {
+        _nav.NavigateTo($"book/{id.ToString()}");
+    }
 }

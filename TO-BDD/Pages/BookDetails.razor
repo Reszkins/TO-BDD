@@ -1,5 +1,42 @@
-﻿<h3>BookDetails</h3>
+﻿@page "/book/{IdStr}"
+@using TO_BDD.Providers
+@using TO_BDD.Models
+@using TO_BDD.Services
+@inject NavigationManager _nav
+@inject LoginStateProvider _loginState
+
+<MudTextField @bind-Value="book.Title" Label="Title" ReadOnly="true" Variant="Variant.Text" />
+<MudTextField @bind-Value="book.Description" Label="Description" ReadOnly="true" Variant="Variant.Text" />
+<MudTextField @bind-Value="book.Author" Label="Author" ReadOnly="true" Variant="Variant.Text" />
+<MudTextField @bind-Value="book.Type" Label="Type" ReadOnly="true" Variant="Variant.Text" />
+<MudButton Variant="Variant.Outlined" OnClick="@(() => AddBookToCart(book))">Add To Cart</MudButton>
 
 @code {
+    private BookService _bookService;
 
+    [CascadingParameter]
+    public CartService _cartService { get; set; }
+
+    [Parameter]
+    public string IdStr { get; set; } = string.Empty;
+
+    public int Id { get; set; }
+    private Book book { get; set; } = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bookService = new();
+        Id = Int32.Parse(IdStr);
+        book = await _bookService.GetBookById(Id);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!_loginState.IsUserLoggedIn()) _nav.NavigateTo("/login");
+    }
+
+    private void AddBookToCart(Book book) {
+        _cartService.AddToCart(book);
+    }
 }
