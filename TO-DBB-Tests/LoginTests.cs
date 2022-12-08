@@ -1,5 +1,4 @@
-﻿using Moq;
-using TO_BDD.Models;
+﻿using TO_BDD.Models;
 using TO_BDD.Services;
 
 namespace TO_DBB_Tests
@@ -19,6 +18,7 @@ namespace TO_DBB_Tests
             var result = await userService.Login(username, password);
 
             //Assert
+            await userService.RemoveUser(username);
             Assert.True(result);
         }
 
@@ -35,6 +35,7 @@ namespace TO_DBB_Tests
             var result = await userService.Login("user1", password);
 
             //Assert
+            await userService.RemoveUser(username);
             Assert.False(result);
         }
 
@@ -51,6 +52,7 @@ namespace TO_DBB_Tests
             var result = await userService.Login(username, "password1");
 
             //Assert
+            await userService.RemoveUser(username);
             Assert.False(result);
         }
 
@@ -67,6 +69,7 @@ namespace TO_DBB_Tests
             var result = await userService.Login("", password);
 
             //Assert
+            await userService.RemoveUser(username);
             Assert.False(result);
         }
 
@@ -83,6 +86,7 @@ namespace TO_DBB_Tests
             var result = await userService.Login(username, "");
 
             //Assert
+            await userService.RemoveUser(username);
             Assert.False(result);
         }
     }
