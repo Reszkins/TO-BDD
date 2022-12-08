@@ -37,7 +37,7 @@
     protected override async Task OnInitializedAsync()
     {
         _bookService = new();
-        Books = await _bookService.GetAllProposedBooks();
+        Books = await _bookService.GetAllProposedBooks(_loginState.GetUserName());
     }
 
     protected override void OnAfterRender(bool firstRender)

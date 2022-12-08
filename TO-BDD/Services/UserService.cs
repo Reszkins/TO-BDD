@@ -11,6 +11,8 @@ namespace TO_BDD.Services
     {
         Task<bool> Login(string username, string password);
         Task<bool> Register(string username, string password);
+        Task<int> GetUserId(string username);
+        Task RemoveUser(string username);
     }
     public class UserService : IUserService
     {
@@ -18,6 +20,18 @@ namespace TO_BDD.Services
         public UserService()
         {
             _db = new DbRepository();
+        }
+
+        public async Task RemoveUser(string username)
+        {
+            string sql = $"DELETE FROM [dbo].[Users] WHERE UserName = '{username}'";
+            await _db.Remove(sql);
+        }
+
+        public async Task<int> GetUserId(string username)
+        {
+            var user = await _db.LoadData<int>($"SELECT Id FROM [dbo].[Users] WHERE UserName = '{username}'");
+            return user.FirstOrDefault();
         }
 
         public async Task<bool> Login(string username, string password)

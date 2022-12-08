@@ -14,7 +14,7 @@
             switch (type) 
             {
                 case BookType.HISTORICAL:
-                    return "historical";
+                    return "historyczne";
                 case BookType.HORROR:
                     return "horror";
                 case BookType.FANTASY:

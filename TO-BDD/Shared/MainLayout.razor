@@ -4,24 +4,43 @@
 @using TO_BDD.Services
 @inject LoginStateProvider _loginState
 @inject NavigationManager _nav
-<PageTitle>TO-BDD</PageTitle>
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<PageTitle>Księgarnia</PageTitle>
+
+<MudAppBar Color="Color.Primary" Fixed="false">
+    <div class="margin-right: 20px">
+        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <MudIcon Icon="@Icons.Filled.Book" Style="@($"color:{Colors.Purple.Lighten5};")" />
+            <MudText>All Books</MudText>
+        </NavLink>
+    </div>
+    
+    <div class="margin-right: 20px">
+        <NavLink class="nav-link" href="ProposedBooks" Match="NavLinkMatch.All">
+            <MudIcon Icon="@Icons.Filled.Book" Style="@($"color:{Colors.Purple.Lighten5};")" />
+            <MudText>Recomended Books</MudText>
+        </NavLink>
+    </div>
+    
+    <div class="margin-right: 20px">
+        <NavLink class="nav-link" href="Cart" Match="NavLinkMatch.All">
+            <MudIcon Icon="@Icons.Filled.ShoppingCart" Style="@($"color:{Colors.Purple.Lighten5};")" />
+            <MudText>Cart</MudText>
+        </NavLink>
+    </div>
+    
+</MudAppBar>
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
     <main>
         <div class="top-row px-4">
-            @*<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>*@
             @if(_loginState.IsUserLoggedIn()) {
                 <MudButton Variant="Variant.Filled" OnClick="Logout">Logout</MudButton>
             }
         </div>
-
-        @*<article class="content px-4">
-            @Body
-        </article>*@
         <CascadingValue Value="@cartService">
             @Body
         </CascadingValue>

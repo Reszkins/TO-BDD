@@ -9,8 +9,10 @@ namespace TO_BDD.Services
     {
         Task<List<Book>> GetAllBooks();
         Task<List<Book>> GetAllBooksByType(BookType bookType);
-        Task<List<Book>> GetAllProposedBooks();
+        Task<List<Book>> GetAllProposedBooks(string username);
         Task<Book> GetBookById(int id);
+        Task RemoveAllBooks();
+        Task AddBook(Book book);
     }
 
     public class BookService : IBookService
@@ -20,6 +22,19 @@ namespace TO_BDD.Services
         {
             _db = new DbRepository();
         }
+
+        public async Task AddBook(Book book)
+        {
+            string sql = $"INSERT INTO [dbo].[Books] (Title, Description, Author, Type) VALUES ('{book.Title}', '{book.Description}', '{book.Author}', '{book.Type}')";
+
+            await _db.SaveData(sql);
+        }
+
+        public async Task RemoveAllBooks()
+        {
+            await _db.TruncateTable("[dbo].[Books]");
+        }
+
         public Task<List<Book>> GetAllBooks()
         {
             string sql = "SELECT * FROM [dbo].[Books]";
@@ -34,13 +49,19 @@ namespace TO_BDD.Services
             return _db.LoadData<Book>(sql);
         }
 
-        public Task<List<Book>> GetAllProposedBooks()
+        public async Task<List<Book>> GetAllProposedBooks(string username)
         {
-            //ALGORYTM
+            var orderService = new OrderService();
+            var orders = await orderService.GetAllOrders(username);
+
+            foreach(var order in orders)
+            {
+
+            }
 
             string sql = "SELECT * FROM [dbo].[Books] WHERE = COŚTAMZALGORYTMU";
 
-            return _db.LoadData<Book>(sql);
+            return await _db.LoadData<Book>(sql);
         }
 
         public async Task<Book> GetBookById(int id)

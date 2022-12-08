@@ -1,12 +1,13 @@
 ﻿using TO_BDD.Models;
+using TO_BDD.Providers;
 using TO_BDD.Repositories;
 
 namespace TO_BDD.Services
 {
     public interface IOrderService 
     {
-        void CreateOrder(Cart cart);
-        Task<List<Order>> GetAllOrders();
+        Task CreateOrder(List<Book> books, string username);
+        Task<List<Order>> GetAllOrders(string username);
     }
 
     public class OrderService : IOrderService
@@ -17,16 +18,27 @@ namespace TO_BDD.Services
             _db = new DbRepository();
         }
 
-        public Task<List<Order>> GetAllOrders()
+        public async Task<List<Order>> GetAllOrders(string username)
         {
-            string sql = "SELECT * FROM [dbo].[Orders]";
+            var userService = new UserService();
+            string sql = $"SELECT * FROM [dbo].[Orders] WHERE UserId = {await userService.GetUserId(username)}";
 
-            return _db.LoadData<Order>(sql);
+            return await _db.LoadData<Order>(sql);
         }
 
-        public void CreateOrder(Cart cart)
+        public async Task CreateOrder(List<Book> books, string username)
         {
-            throw new NotImplementedException();
+            var userService = new UserService();
+            var bookString = "";
+            foreach(var book in books)
+            {
+                bookString += book.Title + ",";
+            }
+            string sql = $"INSERT INTO [TO-BDD].[dbo].[Order] (TimeStamp, UserId, Books) VALUES ('{DateTime.Now.ToString("yyyy-MM-dd")}', {await userService.GetUserId(username)}, '{bookString}')";
+
+
+
+            await _db.SaveData(sql);
         }
     }
 }

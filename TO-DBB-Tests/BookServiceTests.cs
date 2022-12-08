@@ -8,7 +8,7 @@ namespace TO_DBB_Tests
     public class BookServiceTests
     {
         [Fact]
-        public void Get_All_Books_When_List_Empty()
+        public async Task Get_All_Books_When_List_Empty()
         {
             //Arrange
             BookService bookService = new BookService();
@@ -16,7 +16,7 @@ namespace TO_DBB_Tests
             bookService.RemoveAllBooks();
 
             //Act
-            List<Book> books = bookService.GetAllBooks();
+            List<Book> books = await bookService.GetAllBooks();
 
             //Assert
             Assert.Empty(books);
@@ -49,7 +49,17 @@ namespace TO_DBB_Tests
             //Arrange
             BookService bookService = new BookService();
             bookService.RemoveAllBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "historyczne"
+            };
+            //Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));  <- tak nie
+
+
             Book book2 = new Book("Lalka", "Opis costam blabla", "Bolesław Prus", new BookType("Powieść"));
             Book book3 = new Book("Solaris", "opis", "Stanisław Lem", new BookType("Science Fiction"));
             bookService.AddBook(book1);

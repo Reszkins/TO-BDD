@@ -46,7 +46,7 @@
     private async Task Login() {
         var result = await _userService.Login(Username, Password);
         if(result) {
-            _loginState.LogUserIn();
+            _loginState.LogUserIn(Username);
             _nav.NavigateTo("/");
         }
 

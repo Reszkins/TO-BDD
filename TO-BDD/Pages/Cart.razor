@@ -59,8 +59,12 @@
         //StateHasChanged();
     }
 
-    private void MakeOrder() {
+    private async Task MakeOrder() {
+        var orderService = new OrderService();
+        await orderService.CreateOrder(Books, _loginState.GetUserName());
 
+        //clear cart
+        _nav.NavigateTo("/");
     }
 
     private bool FilterFunc1(Book element) => FilterFunc(element, searchString);
