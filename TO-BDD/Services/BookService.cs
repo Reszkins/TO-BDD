@@ -49,6 +49,15 @@ namespace TO_BDD.Services
             return _db.LoadData<Book>(sql);
         }
 
+        public async Task<string> GetTypeByTitle(string title)
+        {
+            string sql = $"SELECT Type FROM [dbo].[Books] WHERE Title = '{title}'";
+
+            var types = await _db.LoadData<string>(sql);
+
+            return types.FirstOrDefault();
+        }
+
         public async Task<List<Book>> GetAllProposedBooks(string username)
         {
             var orderService = new OrderService();
