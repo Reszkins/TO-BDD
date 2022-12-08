@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
-using TO_BDD.Enums;
 using TO_BDD.Models;
 using TO_BDD.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TO_BDD.Services
 {
     public interface IBookService 
     {
         Task<List<Book>> GetAllBooks();
-        Task<List<Book>> GetAllBooksByType(BookType bookType);
+        Task<List<Book>> GetAllBooksByType(string bookType);
         Task<List<Book>> GetAllProposedBooks(string username);
         Task<Book> GetBookById(int id);
         Task RemoveAllBooks();
@@ -42,9 +42,9 @@ namespace TO_BDD.Services
             return _db.LoadData<Book>(sql);
         }
 
-        public Task<List<Book>> GetAllBooksByType(BookType bookType)
+        public Task<List<Book>> GetAllBooksByType(string bookType)
         {
-            string sql = $"SELECT * FROM [dbo].[Books] WHERE [Type] = {BookTypeMapper.GetBookTypeString(bookType)}";
+            string sql = $"SELECT * FROM [dbo].[Books] WHERE [Type] = '{bookType}'";
 
             return _db.LoadData<Book>(sql);
         }
@@ -62,15 +62,38 @@ namespace TO_BDD.Services
         {
             var orderService = new OrderService();
             var orders = await orderService.GetAllOrders(username);
+            List<Book> resultBooks = new List<Book>();
+
+            Dictionary<string, int> bookTypesCount = new Dictionary<string, int>();
 
             foreach(var order in orders)
             {
-
+                foreach (var title in order.Books.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    string type = await GetTypeByTitle(title);
+                    if (bookTypesCount.ContainsKey(type))
+                    {
+                        bookTypesCount[type] = bookTypesCount[type] + 1;
+                    } else
+                    {
+                        bookTypesCount.Add(type, 1);
+                    }
+                }
             }
 
-            string sql = "SELECT * FROM [dbo].[Books] WHERE = COŚTAMZALGORYTMU";
+            if(bookTypesCount.Count > 0)
+            {
+                int highestCount = bookTypesCount.Values.Max();
+                foreach (var bookType in bookTypesCount.Keys)
+                {
+                    if (bookTypesCount[bookType] == highestCount)
+                    {
+                        resultBooks.AddRange(await GetAllBooksByType(bookType));
+                    }
+                }
+            }
 
-            return await _db.LoadData<Book>(sql);
+            return resultBooks;
         }
 
         public async Task<Book> GetBookById(int id)

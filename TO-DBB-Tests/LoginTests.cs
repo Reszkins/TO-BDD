@@ -6,7 +6,7 @@ namespace TO_DBB_Tests
     public class LoginTests
     {
         [Fact]
-        public async void Valid_Login_Data()
+        public async Task Valid_Login_Data()
         {
             //Arrange
             UserService userService = new UserService();
@@ -23,7 +23,7 @@ namespace TO_DBB_Tests
         }
 
         [Fact]
-        public async void Invalid_Login_Data_Invalid_Username()
+        public async Task Invalid_Login_Data_Invalid_Username()
         {
             //Arrange
             UserService userService = new UserService();
@@ -40,7 +40,7 @@ namespace TO_DBB_Tests
         }
 
         [Fact]
-        public async void Invalid_Login_Data_Invalid_Password()
+        public async Task Invalid_Login_Data_Invalid_Password()
         {
             //Arrange
             UserService userService = new UserService();
@@ -57,7 +57,7 @@ namespace TO_DBB_Tests
         }
 
         [Fact]
-        public async void Invalid_Login_Data_Invalid_Blank_Username()
+        public async Task Invalid_Login_Data_Invalid_Blank_Username()
         {
             //Arrange
             UserService userService = new UserService();
@@ -74,7 +74,7 @@ namespace TO_DBB_Tests
         }
 
         [Fact]
-        public async void Invalid_Login_Data_Invalid_Blank_Password()
+        public async Task Invalid_Login_Data_Invalid_Blank_Password()
         {
             //Arrange
             UserService userService = new UserService();

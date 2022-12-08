@@ -11,7 +11,7 @@ namespace TO_BDD.Repositories
     {
         public async Task<List<T>> LoadData<T>(string sql)
         {
-            string connectionString = "Server=(localdb)\\local;Database=TO-BDD;Trusted_Connection=True;";
+            string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=TO-BDD;Trusted_Connection=True;";
 
             using(IDbConnection connection = new SqlConnection(connectionString))
             {
@@ -22,7 +22,7 @@ namespace TO_BDD.Repositories
 
         public async Task SaveData(string sql)
         {
-            string connectionString = "Server=(localdb)\\local;Database=TO-BDD;Trusted_Connection=True;";
+            string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=TO-BDD;Trusted_Connection=True;";
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 await connection.ExecuteAsync(sql);
@@ -32,7 +32,7 @@ namespace TO_BDD.Repositories
         public async Task SaveUserData(string username, byte[] passwordHash, byte[] passwordSalt )
         {
 
-            string connectionString = "Server=(localdb)\\local;Database=TO-BDD;Trusted_Connection=True;";
+            string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=TO-BDD;Trusted_Connection=True;";
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 await connection.ExecuteAsync("INSERT INTO dbo.Users (UserName, PasswordHash, PasswordSalt) " +
@@ -42,16 +42,16 @@ namespace TO_BDD.Repositories
 
         public async Task TruncateTable(string table)
         {
-            string connectionString = "Server=(localdb)\\local;Database=TO-BDD;Trusted_Connection=True;";
+            string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=TO-BDD;Trusted_Connection=True;";
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
-                await connection.ExecuteAsync($"TRUCNATE TABLE {table}");
+                await connection.ExecuteAsync($"TRUNCATE TABLE {table}");
             }
         }
 
         public async Task Remove(string sql)
         {
-            string connectionString = "Server=(localdb)\\local;Database=TO-BDD;Trusted_Connection=True;";
+            string connectionString = "Server=(LocalDb)\\MSSQLLocalDB;Database=TO-BDD;Trusted_Connection=True;";
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 await connection.ExecuteAsync(sql);

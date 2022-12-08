@@ -8,6 +8,7 @@ namespace TO_BDD.Services
     {
         Task CreateOrder(List<Book> books, string username);
         Task<List<Order>> GetAllOrders(string username);
+        Task RemoveAllOrders();
     }
 
     public class OrderService : IOrderService
@@ -30,6 +31,7 @@ namespace TO_BDD.Services
         {
             var userService = new UserService();
             var bookString = "";
+            
             foreach(var book in books)
             {
                 bookString += book.Title + ",";
@@ -37,8 +39,15 @@ namespace TO_BDD.Services
             string sql = $"INSERT INTO [TO-BDD].[dbo].[Order] (TimeStamp, UserId, Books) VALUES ('{DateTime.Now.ToString("yyyy-MM-dd")}', {await userService.GetUserId(username)}, '{bookString}')";
 
 
+            if (books.Count != 0)
+            {
+                await _db.SaveData(sql);
+            }
+        }
 
-            await _db.SaveData(sql);
+        public async Task RemoveAllOrders()
+        {
+            await _db.TruncateTable("[dbo].[Order]");
         }
     }
 }

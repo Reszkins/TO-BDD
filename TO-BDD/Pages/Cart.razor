@@ -9,7 +9,9 @@
     <ToolBarContent>
         <MudText Typo="Typo.h6">Books</MudText>
         <MudSpacer />
-        <MudButton Variant="Variant.Outlined" OnClick="@(() => MakeOrder())">Make Order</MudButton>
+        @if(Books.Count!=0){
+            <MudButton Variant="Variant.Outlined" OnClick="@(() => MakeOrder())">Make Order</MudButton>
+        }
         <MudSpacer />
         <MudTextField @bind-Value="searchString" Immediate="true" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
     </ToolBarContent>
