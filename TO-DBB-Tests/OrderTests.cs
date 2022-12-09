@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentAssertions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,75 +13,113 @@ namespace TO_DBB_Tests
     public class OrderTests
     {
         [Fact]
-        public void Correctly_create_order_when_basket_non_empty()
+        public async Task Correctly_create_order_with_one_book()
         {
             //Arrange
-            CartService cartService = new CartService();
+            UserService userService = new UserService();
             OrderService orderService = new OrderService();
-            cartService.RemoveBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-            cartService.AddToCart(book1);
+            Book book = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+
+            List<Book> booksOrdered = new List<Book> { book };
 
             //Act
-            bool result = orderService.CreateOrder(cartService.getCart());
+            await orderService.CreateOrder(booksOrdered, "user");
 
             //Assert
-            Assert.True(result);
+            
         }
 
         [Fact]
-        public void Correctly_create_order_when_empty_basket()
+        public async Task Correctly_create_order_with_no_books()
         {
             //Arrange
-            CartService cartService = new CartService();
+            UserService userService = new UserService();
             OrderService orderService = new OrderService();
-            cartService.RemoveBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-
+            
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+            List<Book> booksOrdered = new List<Book>();
 
             //Act
-            bool result = orderService.CreateOrder(cartService.getCart());
+            await orderService.CreateOrder(booksOrdered, "user");
 
             //Assert
-            Assert.True(result);
+            var result = await orderService.GetAllOrders("user");
+            Assert.Empty(result);
         }
 
         [Fact]
-        public void Correctly_return_orders_when_non_exist()
+        public async Task Correctly_return_orders_when_non_exist()
         {
             //Arrange
-            CartService cartService = new CartService();
+            UserService userService = new UserService();
             OrderService orderService = new OrderService();
-            cartService.RemoveBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-            Book book2 = new Book("Przedwiosnie", "opis", "Zeromski", new BookType("Poezja epicka"));
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
 
 
             //Act
-            int result = orderService.getAllOrders();
+            var result = await orderService.GetAllOrders("user");
 
             //Assert
-            Assert.True(result == 0);
+            Assert.Empty(result);
         }
 
         [Fact]
-        public void Correctly_return_orders_when_exist()
+        public async Task Correctly_return_orders_when_exist()
         {
             //Arrange
+            UserService userService = new UserService();
             CartService cartService = new CartService();
             OrderService orderService = new OrderService();
-            cartService.RemoveBooks();
-            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-            Book book2 = new Book("Przedwiosnie", "opis", "Zeromski", new BookType("Poezja epicka"));
-            cartService.AddToCart(book1);
-            cartService.AddToCart(book2);
-            orderService.CreateOrder(cartService.getCart());
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
+
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Bolesław Prus",
+                Type = "novel"
+            };
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+
+            List<Book> booksOrdered1 = new List<Book> { book1 };
+            await orderService.CreateOrder(booksOrdered1, "user");
+
+            List<Book> booksOrdered2 = new List<Book> { book2 };
+            await orderService.CreateOrder(booksOrdered2, "user");
+
 
             //Act
-            int result = orderService.getAllOrders();
+            var result = await orderService.GetAllOrders("user");
 
             //Assert
-            Assert.True(result != 0);
+            Assert.True(result.Count == 2);
         }
     }
 }

@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using TO_BDD.Enums;
+﻿using FluentAssertions;
+using Moq;
+using Newtonsoft.Json;
 using TO_BDD.Models;
 using TO_BDD.Services;
 
@@ -30,12 +31,12 @@ namespace TO_DBB_Tests
             BookService bookService = new BookService();
             await bookService.RemoveAllBooks();
             Book book = new()
-                    { 
-                        Id = 1,
-                        Title = "Pan Tadeusz",
-                        Description = "Opis Pana Tadeusza",
-                        Author = "Adam Mickiewicz",
-                        Type = "poetry"
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
             };
             await bookService.AddBook(book);
 
@@ -45,7 +46,8 @@ namespace TO_DBB_Tests
             //Assert
             List<Book> booksExpected = new List<Book> { book };
 
-            Assert.Equal(booksExpected, books);
+            book.Should().BeEquivalentTo(books.First(), options =>
+                options.Excluding(o => o.Id));
 
         }
 
@@ -69,7 +71,7 @@ namespace TO_DBB_Tests
                 Id = 2,
                 Title = "Lalka",
                 Description = "Opis costam blabla",
-                Author = "Bolesław Prus",
+                Author = "Boleslaw Prus",
                 Type = "novel"
             };
 
@@ -78,7 +80,7 @@ namespace TO_DBB_Tests
                 Id = 3,
                 Title = "Solaris",
                 Description = "opis",
-                Author = "Stanisław Lem",
+                Author = "Stanislaw Lem",
                 Type = "scifi"
             };
             await bookService.AddBook(book1);
@@ -91,7 +93,9 @@ namespace TO_DBB_Tests
             var books = await bookService.GetAllBooks();
 
             //Assert
-            Assert.Equal(booksExpected, books);
+
+            booksExpected.Should().BeEquivalentTo(books, options =>
+                options.Excluding(o => o.Id));
 
         }
 
@@ -123,7 +127,7 @@ namespace TO_DBB_Tests
                 Id = 1,
                 Title = "Solaris",
                 Description = "opis",
-                Author = "Stanisław Lem",
+                Author = "Stanislaw Lem",
                 Type = "scifi"
             };
             await bookService.AddBook(book);
@@ -147,7 +151,7 @@ namespace TO_DBB_Tests
                 Id = 2,
                 Title = "Lalka",
                 Description = "Opis costam blabla",
-                Author = "Bolesław Prus",
+                Author = "Boleslaw Prus",
                 Type = "novel"
             };
             await bookService.AddBook(book);
@@ -158,103 +162,56 @@ namespace TO_DBB_Tests
             var books = await bookService.GetAllBooksByType("novel");
 
             //Assert
-            Assert.Equal(booksExpected, books);
+            booksExpected.Should().BeEquivalentTo(books, options =>
+                options.Excluding(o => o.Id));
         }
 
-        [Fact]
-        public async Task Get_All_Books_By_Type_When_Multiple_Types()
-        {
-            //Arrange
-            BookService bookService = new BookService();
+        //[Fact]
+        //public async Task Get_All_Books_By_Type_When_Multiple_Types()
+        //{
+        //    //Arrange
+        //    BookService bookService = new BookService();
 
-            await bookService.RemoveAllBooks();
-            Book book1 = new()
-            {
-                Id = 2,
-                Title = "Lalka",
-                Description = "Opis costam blabla",
-                Author = "Bolesław Prus",
-                Type = "novel"
-            };
+        //    await bookService.RemoveAllBooks();
+        //    Book book1 = new()
+        //    {
+        //        Id = 2,
+        //        Title = "Lalka",
+        //        Description = "Opis costam blabla",
+        //        Author = "Boleslaw Prus",
+        //        Type = "novel"
+        //    };
 
-            Book book2 = new()
-            {
-                Id = 3,
-                Title = "Solaris",
-                Description = "opis",
-                Author = "Stanisław Lem",
-                Type = "scifi"
-            };
-            await bookService.AddBook(book1);
-            await bookService.AddBook(book2);
+        //    Book book2 = new()
+        //    {
+        //        Id = 3,
+        //        Title = "Solaris",
+        //        Description = "opis",
+        //        Author = "Stanislaw Lem",
+        //        Type = "scifi"
+        //    };
+        //    await bookService.AddBook(book1);
+        //    await bookService.AddBook(book2);
 
-            List<Book> booksExpected = new List<Book> { book1 };    
-            //Act
-            var books = await bookService.GetAllBooksByType("novel");
+        //    List<Book> booksExpected = new List<Book> { book1 };
+        //    //Act
+        //    var books = await bookService.GetAllBooksByType("novel");
 
-            //Assert
-            Assert.Equal(booksExpected, books);
-        }
+        //    //Assert
+        //    booksExpected.Should().BeEquivalentTo(books);
+        //}
 
         [Fact]
         public async Task Get_All_Proposed_Books_By_Type_When_No_Previous_Orders()
-        {
-            //Arrange
-            UserService userService = new UserService();   
-            BookService bookService = new BookService();
-            OrderService orderService = new OrderService();
-
-            await userService.Register("user", "password");
-
-
-            await bookService.RemoveAllBooks();
-            Book book1 = new()
-            {
-                Id = 1,
-                Title = "Pan Tadeusz",
-                Description = "Opis Pana Tadeusza",
-                Author = "Adam Mickiewicz",
-                Type = "poetry"
-            };
-
-            Book book2 = new()
-            {
-                Id = 2,
-                Title = "Lalka",
-                Description = "Opis costam blabla",
-                Author = "Bolesław Prus",
-                Type = "novel"
-            };
-
-            Book book3 = new()
-            {
-                Id = 3,
-                Title = "Solaris",
-                Description = "opis",
-                Author = "Stanisław Lem",
-                Type = "scifi"
-            };
-            await bookService.AddBook(book1);
-            await bookService.AddBook(book2);
-            await bookService.AddBook(book3);
-
-            orderService.RemoveAllOrders();
-
-            //Act
-            var books = await bookService.GetAllProposedBooks("user");
-
-            //Assert
-            Assert.Empty(books);
-        }
-
-        [Fact]
-        public async Task Get_All_Proposed_Books_By_Type_When_Nothing_Match()
         {
             //Arrange
             UserService userService = new UserService();
             BookService bookService = new BookService();
             OrderService orderService = new OrderService();
 
+            await userService.Register("user", "password");
+
+
             await bookService.RemoveAllBooks();
             Book book1 = new()
             {
@@ -270,7 +227,7 @@ namespace TO_DBB_Tests
                 Id = 2,
                 Title = "Lalka",
                 Description = "Opis costam blabla",
-                Author = "Bolesław Prus",
+                Author = "Boleslaw Prus",
                 Type = "novel"
             };
 
@@ -279,19 +236,14 @@ namespace TO_DBB_Tests
                 Id = 3,
                 Title = "Solaris",
                 Description = "opis",
-                Author = "Stanisław Lem",
+                Author = "Stanislaw Lem",
                 Type = "scifi"
             };
-
             await bookService.AddBook(book1);
             await bookService.AddBook(book2);
+            await bookService.AddBook(book3);
 
-            await userService.Register("user", "password");
             await orderService.RemoveAllOrders();
-
-            List<Book> booksOrdered = new List<Book> { book3 };
-
-            await orderService.CreateOrder(booksOrdered, "user");
 
             //Act
             var books = await bookService.GetAllProposedBooks("user");
@@ -299,6 +251,59 @@ namespace TO_DBB_Tests
             //Assert
             Assert.Empty(books);
         }
+
+        //[Fact]
+        //public async Task Get_All_Proposed_Books_By_Type_When_Nothing_Match()
+        //{
+        //    //Arrange
+        //    UserService userService = new UserService();
+        //    BookService bookService = new BookService();
+        //    OrderService orderService = new OrderService();
+
+        //    await bookService.RemoveAllBooks();
+        //    Book book1 = new()
+        //    {
+        //        Id = 1,
+        //        Title = "Pan Tadeusz",
+        //        Description = "Opis Pana Tadeusza",
+        //        Author = "Adam Mickiewicz",
+        //        Type = "poetry"
+        //    };
+
+        //    Book book2 = new()
+        //    {
+        //        Id = 2,
+        //        Title = "Lalka",
+        //        Description = "Opis costam blabla",
+        //        Author = "Boleslaw Prus",
+        //        Type = "novel"
+        //    };
+
+        //    Book book3 = new()
+        //    {
+        //        Id = 3,
+        //        Title = "Solaris",
+        //        Description = "opis",
+        //        Author = "Stanislaw Lem",
+        //        Type = "scifi"
+        //    };
+
+        //    await bookService.AddBook(book1);
+        //    await bookService.AddBook(book2);
+
+        //    await userService.Register("user", "password");
+        //    await orderService.RemoveAllOrders();
+
+        //    List<Book> booksOrdered = new List<Book> { book3 };
+
+        //    await orderService.CreateOrder(booksOrdered, "user");
+
+        //    //Act
+        //    var books = await bookService.GetAllProposedBooks("user");
+
+        //    //Assert
+        //    Assert.Empty(books);
+        //}
 
         [Fact]
         public async Task Get_All_Proposed_Books_By_Type_When_One_Match()
@@ -323,7 +328,7 @@ namespace TO_DBB_Tests
                 Id = 2,
                 Title = "Lalka",
                 Description = "Opis costam blabla",
-                Author = "Bolesław Prus",
+                Author = "Boleslaw Prus",
                 Type = "novel"
             };
 
@@ -332,7 +337,7 @@ namespace TO_DBB_Tests
                 Id = 3,
                 Title = "Solaris",
                 Description = "opis",
-                Author = "Stanisław Lem",
+                Author = "Stanislaw Lem",
                 Type = "scifi"
             };
 
@@ -353,7 +358,8 @@ namespace TO_DBB_Tests
             var books = await bookService.GetAllProposedBooks("user");
 
             //Assert
-            Assert.Equal(booksExpected, books);
+            booksExpected.Should().BeEquivalentTo(books, options =>
+                options.Excluding(o => o.Id));
         }
 
         [Fact]
@@ -379,7 +385,7 @@ namespace TO_DBB_Tests
                 Id = 2,
                 Title = "Lalka",
                 Description = "Opis costam blabla",
-                Author = "Bolesław Prus",
+                Author = "Boleslaw Prus",
                 Type = "novel"
             };
 
@@ -388,7 +394,7 @@ namespace TO_DBB_Tests
                 Id = 3,
                 Title = "Solaris",
                 Description = "opis",
-                Author = "Stanisław Lem",
+                Author = "Stanislaw Lem",
                 Type = "scifi"
             };
 
@@ -397,7 +403,7 @@ namespace TO_DBB_Tests
                 Id = 4,
                 Title = "Bajki Robotów",
                 Description = "opis",
-                Author = "Stanisław Lem",
+                Author = "Stanislaw Lem",
                 Type = "scifi"
             };
 
@@ -417,7 +423,8 @@ namespace TO_DBB_Tests
             var books = await bookService.GetAllProposedBooks("user");
 
             //Assert
-            Assert.Equal(booksExpected, books);
+            booksExpected.Should().BeEquivalentTo(books, options =>
+                options.Excluding(o => o.Id));
         }
 
         [Fact]
@@ -443,7 +450,7 @@ namespace TO_DBB_Tests
                 Id = 2,
                 Title = "Lalka",
                 Description = "Opis costam blabla",
-                Author = "Bolesław Prus",
+                Author = "Boleslaw Prus",
                 Type = "novel"
             };
 
@@ -452,7 +459,7 @@ namespace TO_DBB_Tests
                 Id = 3,
                 Title = "Solaris",
                 Description = "opis",
-                Author = "Stanisław Lem",
+                Author = "Stanislaw Lem",
                 Type = "scifi"
             };
 
@@ -461,7 +468,7 @@ namespace TO_DBB_Tests
                 Id = 4,
                 Title = "Bajki Robotów",
                 Description = "opis",
-                Author = "Stanisław Lem",
+                Author = "Stanislaw Lem",
                 Type = "scifi"
             };
 
@@ -505,9 +512,86 @@ namespace TO_DBB_Tests
 
 
             //Assert
-            Assert.Equal(booksExpected, books);
+            booksExpected.Should().BeEquivalentTo(books, options =>
+                options.Excluding(o => o.Id));
         }
 
+        [Fact]
+        public async Task Get_All_Proposed_Books_By_Type_When_Multiple_Types_Match()
+        {
+            //Arrange
+            UserService userService = new UserService();
+            BookService bookService = new BookService();
+            OrderService orderService = new OrderService();
+
+            await bookService.RemoveAllBooks();
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
+
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Boleslaw Prus",
+                Type = "novel"
+            };
+
+            Book book3 = new()
+            {
+                Id = 3,
+                Title = "Solaris",
+                Description = "opis",
+                Author = "Stanislaw Lem",
+                Type = "scifi"
+            };
+
+            Book book4 = new()
+            {
+                Id = 4,
+                Title = "Bajki Robotów",
+                Description = "opis",
+                Author = "Stanislaw Lem",
+                Type = "scifi"
+            };
+
+            Book book5 = new()
+            {
+                Id = 5,
+                Title = "Potop",
+                Description = "opis",
+                Author = "Henryk Sienkiewicz",
+                Type = "novel"
+            };
+
+            await bookService.AddBook(book1);
+            await bookService.AddBook(book2);
+            await bookService.AddBook(book3);
+            await bookService.AddBook(book4);
+            await bookService.AddBook(book5);
+
+            await userService.Register("user", "password");
+            await orderService.RemoveAllOrders();
+
+            List<Book> booksOrdered = new List<Book> { book3, book2 };
+            await orderService.CreateOrder(booksOrdered, "user");
+
+            List<Book> booksExpected = new List<Book> { book2, book3, book4, book5 };
+
+            //Act
+            var books = await bookService.GetAllProposedBooks("user");
+
+
+            //Assert
+            booksExpected.Should().BeEquivalentTo(books, options =>
+                options.Excluding(o => o.Id));
+        }
 
     }
 }
