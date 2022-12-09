@@ -1,97 +1,129 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
-//using TO_BDD.Enums;
-//using TO_BDD.Models;
-//using TO_BDD.Services;
+﻿using FluentAssertions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using TO_BDD.Models;
+using TO_BDD.Services;
 
-//namespace TO_DBB_Tests
-//{
-//    public class CartTests
-//    {
-//        [Fact]
-//        public void Correctly_added_book_to_empty_basket()
-//        {
-//            //Arrange
-//            CartService cartService = new CartService();
-//            cartService.RemoveBooks();
-//            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
+namespace TO_DBB_Tests
+{
+    public class CartTests
+    {
+        [Fact]
+        public void Correctly_added_book_to_empty_basket()
+        {
+            //Arrange
+            CartService cartService = new CartService();
+            cartService.RemoveAllFromCart();
+            Book book = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
 
-//            //Act
-//            bool result = cartService.AddToCard(book1);
+            //Act
+            cartService.AddToCart(book);
 
-//            //Assert
-//            Assert.True(result);
-//        }
+            //Assert
+            List<Book> books = cartService.GetBooksFromCart();
 
-//        [Fact]
-//        public void Correctly_added_book_to_non_empty_basket()
-//        {
-//            //Arrange
-//            CartService cartService = new CartService();
-//            cartService.RemoveBooks();
+            book.Should().BeEquivalentTo(books.First(), options =>
+                options.Excluding(o => o.Id));
+        }
 
-//            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-//            Book book2 = new Book("Przedwiosnie", "Opis Przedwiosnia", "Stefan Zeromski", new BookType("Poezja epicka"));
-//            cartService.AddToCard(book1);
+        [Fact]
+        public void Correctly_added_book_to_non_empty_basket()
+        {
+            //Arrange
+            CartService cartService = new CartService();
+            cartService.RemoveAllFromCart();
 
-//            //Act
-//            bool result = cartService.AddToCard(book2);
+            Book book1 = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
 
-//            //Assert
-//            Assert.True(result);
-//        }
+            Book book2 = new()
+            {
+                Id = 2,
+                Title = "Lalka",
+                Description = "Opis costam blabla",
+                Author = "Boleslaw Prus",
+                Type = "novel"
+            };
 
-//        [Fact]
-//        public void Correctly_delete_book_from_non_empty_basket()
-//        {
-//            //Arrange
-//            CartService cartService = new CartService();
-//            cartService.RemoveBooks();
+            cartService.AddToCart(book1);
 
-//            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
-//            cartService.AddToCard(book1);
+            //Act
+            cartService.AddToCart(book2);
 
-//            //Act
-//            bool result = cartService.RemoveFromCart(book1);
+            //Assert
+            List<Book> books = cartService.GetBooksFromCart();
+            List<Book> booksExpected = new List<Book> { book1, book2 };
 
-//            //Assert
-//            Assert.True(result);
-//        }
+            booksExpected.Should().BeEquivalentTo(books, options =>
+                options.Excluding(o => o.Id));
 
-//        [Fact]
-//        public void Correctly_delete_book_from_empty_basket()
-//        {
-//            //Arrange
-//            CartService cartService = new CartService();
-//            cartService.RemoveBooks();
+        }
 
-//            Book book1 = new Book("Pan Tadeusz", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
+        [Fact]
+        public void Correctly_delete_book_from_non_empty_basket()
+        {
+            //Arrange
+            CartService cartService = new CartService();
+            cartService.RemoveAllFromCart();
 
-//            //Act
-//            bool result = cartService.RemoveFromCart(book1);
+            Book book = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
 
-//            //Assert
-//            Assert.True(result);
-//        }
+            cartService.AddToCart(book);
 
-//        [Fact]
-//        public void Correctly_delete_non_existing_book_from_empty_basket()
-//        {
-//            //Arrange
-//            CartService cartService = new CartService();
-//            cartService.RemoveBooks();
+            //Act
+            cartService.RemoveFromCart(book);
 
-//            Book book1 = new Book("Nieistniejaca ksiazka", "Opis Pana Tadeusza", "Adam Mickiewicz", new BookType("Poezja epicka"));
+            //Assert
+            List<Book> books = cartService.GetBooksFromCart();
+            Assert.Empty(books);
+        }
 
-//            //Act
-//            bool result = cartService.RemoveFromCart(book1);
+        [Fact]
+        public void Correctly_delete_book_from_empty_basket()
+        {
+            //Arrange
+            CartService cartService = new CartService();
+            cartService.RemoveAllFromCart();
 
-//            //Assert
-//            Assert.True(result);
-//        }
+            Book book = new()
+            {
+                Id = 1,
+                Title = "Pan Tadeusz",
+                Description = "Opis Pana Tadeusza",
+                Author = "Adam Mickiewicz",
+                Type = "poetry"
+            };
 
-//    }
-//}
+            //Act
+            cartService.RemoveFromCart(book);
+
+            //Assert
+            List<Book> books = cartService.GetBooksFromCart();
+            Assert.Empty(books);
+        }
+
+    }
+}

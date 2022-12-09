@@ -34,5 +34,10 @@ namespace TO_BDD.Services
         {
             return cart.Books;
         }
+
+        public void RemoveAllFromCart()
+        {
+            cart.Books.Clear();
+        }
     }
 }

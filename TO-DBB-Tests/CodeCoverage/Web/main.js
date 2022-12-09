@@ -223,7 +223,7 @@ var assemblies = [
     "classes": [
       { "name": "Program", "rp": "TO_BDD_Program.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 34, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "TO_BDD.Models.Book", "rp": "TO_BDD_Book.html", "cl": 5, "ucl": 0, "cal": 5, "tl": 47, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "TO_BDD.Models.Cart", "rp": "TO_BDD_Cart.html", "cl": 0, "ucl": 2, "cal": 2, "tl": 11, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "TO_BDD.Models.Cart", "rp": "TO_BDD_Cart.html", "cl": 2, "ucl": 0, "cal": 2, "tl": 11, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "TO_BDD.Models.Order", "rp": "TO_BDD_Order.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 11, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "TO_BDD.Models.User", "rp": "TO_BDD_User.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 10, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "TO_BDD.Pages.BookDetails", "rp": "TO_BDD_BookDetails.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 44, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
@@ -235,10 +235,10 @@ var assemblies = [
       { "name": "TO_BDD.Pages.ProposedBooks", "rp": "TO_BDD_ProposedBooks.html", "cl": 0, "ucl": 30, "cal": 30, "tl": 67, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 10, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "TO_BDD.Providers.LoginStateProvider", "rp": "TO_BDD_LoginStateProvider.html", "cl": 0, "ucl": 9, "cal": 9, "tl": 20, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "TO_BDD.Repositories.DbRepository", "rp": "TO_BDD_DbRepository.html", "cl": 36, "ucl": 0, "cal": 36, "tl": 61, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "TO_BDD.Services.BookService", "rp": "TO_BDD_BookService.html", "cl": 56, "ucl": 5, "cal": 61, "tl": 107, "ct": "LineCoverage", "cbm": "-", "cb": 12, "tb": 12, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "TO_BDD.Services.CartService", "rp": "TO_BDD_CartService.html", "cl": 0, "ucl": 16, "cal": 16, "tl": 38, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "TO_BDD.Services.BookService", "rp": "TO_BDD_BookService.html", "cl": 28, "ucl": 33, "cal": 61, "tl": 107, "ct": "LineCoverage", "cbm": "-", "cb": 2, "tb": 12, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "TO_BDD.Services.CartService", "rp": "TO_BDD_CartService.html", "cl": 16, "ucl": 3, "cal": 19, "tl": 43, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "TO_BDD.Services.OrderService", "rp": "TO_BDD_OrderService.html", "cl": 25, "ucl": 0, "cal": 25, "tl": 53, "ct": "LineCoverage", "cbm": "-", "cb": 4, "tb": 4, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
-      { "name": "TO_BDD.Services.UserService", "rp": "TO_BDD_UserService.html", "cl": 71, "ucl": 0, "cal": 71, "tl": 125, "ct": "LineCoverage", "cbm": "-", "cb": 18, "tb": 18, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "TO_BDD.Services.UserService", "rp": "TO_BDD_UserService.html", "cl": 70, "ucl": 1, "cal": 71, "tl": 125, "ct": "LineCoverage", "cbm": "-", "cb": 17, "tb": 18, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "TO_BDD.Shared.MainLayout", "rp": "TO_BDD_MainLayout.html", "cl": 0, "ucl": 8, "cal": 8, "tl": 53, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 2, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
     ]},
 ];
